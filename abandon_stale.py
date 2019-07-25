@@ -56,65 +56,118 @@ from pygerrit2.rest.auth import HTTPBasicAuthFromNetrc, HTTPDigestAuthFromNetrc
 
 def _main():
     parser = optparse.OptionParser()
-    parser.add_option('-g', '--gerrit-url', dest='gerrit_url',
-                      metavar='URL',
-                      default=None,
-                      help='gerrit server URL')
-    parser.add_option('-b', '--basic-auth', dest='basic_auth',
-                      action='store_true',
-                      help='(deprecated) use HTTP basic authentication instead'
-                      ' of digest')
-    parser.add_option('-d', '--digest-auth', dest='digest_auth',
-                      action='store_true',
-                      help='use HTTP digest authentication instead of basic')
-    parser.add_option('-n', '--dry-run', dest='dry_run',
-                      action='store_true',
-                      help='enable dry-run mode: show stale changes but do '
-                           'not abandon them')
-    parser.add_option('-t', '--test', dest='testmode', action='store_true',
-                      help='test mode: query changes with the `test-abandon` '
-                           'topic and ignore age option')
-    parser.add_option('-a', '--age', dest='age',
-                      metavar='AGE',
-                      default="6months",
-                      help='age of change since last update in days, months'
-                           ' or years (default: %default)')
-    parser.add_option('-m', '--message', dest='message',
-                      metavar='STRING', default=None,
-                      help='custom message to append to abandon message')
-    parser.add_option('--branch', dest='branches', metavar='BRANCH_NAME',
-                      default=[], action='append',
-                      help='abandon changes only on the given branch')
-    parser.add_option('--exclude-branch', dest='exclude_branches',
-                      metavar='BRANCH_NAME',
-                      default=[],
-                      action='append',
-                      help='do not abandon changes on given branch')
-    parser.add_option('--project', dest='projects', metavar='PROJECT_NAME',
-                      default=[], action='append',
-                      help='abandon changes only on the given project')
-    parser.add_option('--exclude-project', dest='exclude_projects',
-                      metavar='PROJECT_NAME',
-                      default=[],
-                      action='append',
-                      help='do not abandon changes on given project')
-    parser.add_option('--owner', dest='owner',
-                      metavar='USERNAME',
-                      default=None,
-                      action='store',
-                      help='only abandon changes owned by the given user')
-    parser.add_option('--exclude-wip', dest='exclude_wip',
-                      action='store_true',
-                      help='Exclude changes that are Work-in-Progress')
-    parser.add_option('-v', '--verbose', dest='verbose',
-                      action='store_true',
-                      help='enable verbose (debug) logging')
+    parser.add_option(
+        "-g",
+        "--gerrit-url",
+        dest="gerrit_url",
+        metavar="URL",
+        default=None,
+        help="gerrit server URL",
+    )
+    parser.add_option(
+        "-b",
+        "--basic-auth",
+        dest="basic_auth",
+        action="store_true",
+        help="(deprecated) use HTTP basic authentication instead" " of digest",
+    )
+    parser.add_option(
+        "-d",
+        "--digest-auth",
+        dest="digest_auth",
+        action="store_true",
+        help="use HTTP digest authentication instead of basic",
+    )
+    parser.add_option(
+        "-n",
+        "--dry-run",
+        dest="dry_run",
+        action="store_true",
+        help="enable dry-run mode: show stale changes but do " "not abandon them",
+    )
+    parser.add_option(
+        "-t",
+        "--test",
+        dest="testmode",
+        action="store_true",
+        help="test mode: query changes with the `test-abandon` "
+        "topic and ignore age option",
+    )
+    parser.add_option(
+        "-a",
+        "--age",
+        dest="age",
+        metavar="AGE",
+        default="6months",
+        help="age of change since last update in days, months"
+        " or years (default: %default)",
+    )
+    parser.add_option(
+        "-m",
+        "--message",
+        dest="message",
+        metavar="STRING",
+        default=None,
+        help="custom message to append to abandon message",
+    )
+    parser.add_option(
+        "--branch",
+        dest="branches",
+        metavar="BRANCH_NAME",
+        default=[],
+        action="append",
+        help="abandon changes only on the given branch",
+    )
+    parser.add_option(
+        "--exclude-branch",
+        dest="exclude_branches",
+        metavar="BRANCH_NAME",
+        default=[],
+        action="append",
+        help="do not abandon changes on given branch",
+    )
+    parser.add_option(
+        "--project",
+        dest="projects",
+        metavar="PROJECT_NAME",
+        default=[],
+        action="append",
+        help="abandon changes only on the given project",
+    )
+    parser.add_option(
+        "--exclude-project",
+        dest="exclude_projects",
+        metavar="PROJECT_NAME",
+        default=[],
+        action="append",
+        help="do not abandon changes on given project",
+    )
+    parser.add_option(
+        "--owner",
+        dest="owner",
+        metavar="USERNAME",
+        default=None,
+        action="store",
+        help="only abandon changes owned by the given user",
+    )
+    parser.add_option(
+        "--exclude-wip",
+        dest="exclude_wip",
+        action="store_true",
+        help="Exclude changes that are Work-in-Progress",
+    )
+    parser.add_option(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="enable verbose (debug) logging",
+    )
 
     (options, _args) = parser.parse_args()
 
     level = logging.DEBUG if options.verbose else logging.INFO
-    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
-                        level=level)
+    logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", level=level)
 
     if not options.gerrit_url:
         logging.error("Gerrit URL is required")
@@ -128,8 +181,10 @@ def _main():
         if not match:
             logging.error("Invalid age: %s", options.age)
             return 1
-        message = "Abandoning after %s %s or more of inactivity." % \
-            (match.group(1), match.group(2))
+        message = "Abandoning after %s %s or more of inactivity." % (
+            match.group(1),
+            match.group(2),
+        )
 
     if options.digest_auth:
         auth_type = HTTPDigestAuthFromNetrc
@@ -210,8 +265,10 @@ def _main():
             continue
 
         try:
-            gerrit.post("/changes/" + change_id + "/abandon",
-                        json={"message": "%s" % abandon_message})
+            gerrit.post(
+                "/changes/" + change_id + "/abandon",
+                json={"message": "%s" % abandon_message},
+            )
             abandoned += 1
         except Exception as e:
             errors += 1

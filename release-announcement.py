@@ -70,7 +70,7 @@ from jinja2 import Template
 class Version:
     def __init__(self, version):
         self.version = version
-        parts = version.split('.')
+        parts = version.split(".")
         if len(parts) > 2:
             self.major = ".".join(parts[:2])
             self.patch = version.replace(".", "")
@@ -83,17 +83,26 @@ class Version:
 
 
 def _main():
-    descr = 'Generate Gerrit release announcement email text'
+    descr = "Generate Gerrit release announcement email text"
     parser = argparse.ArgumentParser(
-        description=descr,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-v', '--version', dest='version',
-                        required=True,
-                        help='gerrit version to release')
-    parser.add_argument('-p', '--previous', dest='previous',
-                        help='previous gerrit version (optional)')
-    parser.add_argument('-s', '--summary', dest='summary',
-                        help='summary of the release content (optional)')
+        description=descr, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        dest="version",
+        required=True,
+        help="gerrit version to release",
+    )
+    parser.add_argument(
+        "-p", "--previous", dest="previous", help="previous gerrit version (optional)"
+    )
+    parser.add_argument(
+        "-s",
+        "--summary",
+        dest="summary",
+        help="summary of the release content (optional)",
+    )
     options = parser.parse_args()
 
     summary = options.summary
@@ -103,22 +112,26 @@ def _main():
     data = {
         "version": Version(options.version),
         "previous": options.previous,
-        "summary": summary
+        "summary": summary,
     }
 
     war = os.path.join(
         os.path.expanduser("~/.m2/repository/com/google/gerrit/gerrit-war/"),
-        "%(version)s/gerrit-war-%(version)s.war" % data)
+        "%(version)s/gerrit-war-%(version)s.war" % data,
+    )
     if not os.path.isfile(war):
-        print("Could not find war file for Gerrit %s in local Maven repository"
-              % data["version"], file=sys.stderr)
+        print(
+            "Could not find war file for Gerrit %s in local Maven repository"
+            % data["version"],
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     md5 = hashlib.md5()
     sha1 = hashlib.sha1()
     sha256 = hashlib.sha256()
     BUF_SIZE = 65536  # Read data in 64kb chunks
-    with open(war, 'rb') as f:
+    with open(war, "rb") as f:
         while True:
             d = f.read(BUF_SIZE)
             if not d:
@@ -132,8 +145,8 @@ def _main():
     data["md5"] = md5.hexdigest()
 
     template_path = os.path.join(
-        os.path.dirname(os.path.realpath(__file__)),
-        "release-announcement-template.txt")
+        os.path.dirname(os.path.realpath(__file__)), "release-announcement-template.txt"
+    )
     template = Template(open(template_path).read())
     output = template.render(data=data)
 
