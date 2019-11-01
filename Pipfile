@@ -11,6 +11,10 @@ python-gnupg = "*"
 [dev-packages]
 flake8 = "==3.5.0"
 pyflakes = "==1.6.0"
+black = {version = "==19.10b0", markers = "python_version >= '3.6.0'"}
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
