@@ -70,13 +70,14 @@ from jinja2 import Template
 class Version:
     def __init__(self, version):
         self.version = version
+        self.version_no_rc = version.split("-")[0]
         parts = version.split(".")
         if len(parts) > 2:
             self.major = ".".join(parts[:2])
-            self.patch = version.replace(".", "")
+            self.anchor = self.version_no_rc.replace(".", "")
         else:
             self.major = version
-            self.patch = None
+            self.anchor = None
 
     def __str__(self):
         return self.version

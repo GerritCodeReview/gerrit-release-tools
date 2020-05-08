@@ -1,10 +1,10 @@
 Gerrit version {{ data.version }} is now available.{% if data.summary %} {{ data.summary }} {% endif %}Please see the release notes for details.
 
 Release Notes:
-https://www.gerritcodereview.com/{{ data.version.major }}.html{% if data.version.patch %}#{{ data.version.patch }}{% endif %}
+https://www.gerritcodereview.com/{{ data.version.major }}.html{% if data.version.anchor %}#{{ data.version.anchor }}{% endif %}
 
 Documentation:
-http://gerrit-documentation.storage.googleapis.com/Documentation/{{ data.version }}/index.html
+http://gerrit-documentation.storage.googleapis.com/Documentation/{{ data.version.version_no_rc }}/index.html
 {% if data.previous %}
 Log of changes since {{ data.previous }}:
 https://gerrit.googlesource.com/gerrit/+log/v{{ data.previous }}..v{{ data.version }}?no-merges
